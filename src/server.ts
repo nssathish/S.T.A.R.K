@@ -7,14 +7,14 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-const port = process.env.PORT || 3978;
+const port = process.env.PORT;
 
 const adapter = new BotFrameworkAdapter({
-  appId: "BOT_ID",
-  appPassword: "BOT_SECRET",
+  appId: process.env.BOT_ID,
+  appPassword: process.env.BOT_PASSWORD,
 });
 
-class MyBot extends TeamsActivityHandler {
+class Edith extends TeamsActivityHandler {
   constructor() {
     super();
     this.onMessage(async (context, next) => {
@@ -26,10 +26,11 @@ class MyBot extends TeamsActivityHandler {
   }
 }
 
-const bot = new MyBot();
+const bot = new Edith();
 
 app.post("/api/messages", (req, res) => {
   adapter.processActivity(req, res, async (context) => {
+    // @ts-ignore
     await bot.run(context, async (context) => {
       const userQuestion = context.activity.text;
       const answer = await generateAnswer(userQuestion); // OpenAI integration

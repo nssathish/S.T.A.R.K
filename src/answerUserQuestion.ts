@@ -1,18 +1,20 @@
 import { OpenAI } from "openai";
 import * as fs from "fs";
 import * as path from "path";
+import dotenv from "dotenv";
+dotenv.config();
 
 const openai = new OpenAI({
-  apiKey: "OPENAI_API_KEY",
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 const docsDirectory = "../docs/content";
 
 function loadDocumentation(): { content: string; filePath: string }[] {
   const files = fs.readdirSync(docsDirectory, { recursive: true });
-  const mdxFiles = files.filter((file) => file.endsWith(".mdx"));
+  const mdxFiles = files.filter((file) => file.toString().endsWith(".mdx"));
   return mdxFiles.map((file) => {
-    const filePath = path.join(docsDirectory, file);
+    const filePath = path.join(docsDirectory, file.toString());
     // console.log("Loading file:", filePath);
     const content = fs.readFileSync(filePath, "utf-8");
     return { content, filePath };
