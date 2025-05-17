@@ -1,6 +1,7 @@
-# Edith
-
-A local Microsoft Teams bot named Edith that uses OpenAI and Pinecone to answer questions from Docusaurus docs.
+# S.T.A.R.K
+## Slick Tech Assistant Resolving Knowledge.
+Got repeat questions? Annoying tickets? Docs no one reads?
+It's got answers. Fast, sharp, and with just enough attitude.
 
 # How to Run
 
