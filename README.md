@@ -1,4 +1,4 @@
-# S.T.A.R.K
+# S.T.A.R.K - Slick Technical Assistant Resolving Knowledge
 
 A local Microsoft Teams bot (RAG based AI agent) named Stark that uses OpenAI and Pinecone to
 answer questions from Docusaurus docs.
