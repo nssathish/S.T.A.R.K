@@ -1,7 +1,7 @@
 import {TeamsActivityHandler} from "botbuilder";
 import {semanticAnalysis} from "./process";
 
-export class Stark extends TeamsActivityHandler {
+export class Agent extends TeamsActivityHandler {
     constructor() {
         super();
         this.onMessage(async (context, next) => {

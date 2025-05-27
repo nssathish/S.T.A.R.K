@@ -1,6 +1,6 @@
 import express from "express";
 import {CloudAdapter, ConfigurationBotFrameworkAuthentication} from "botbuilder";
-import {Stark} from "./stark";
+import {Agent} from "./agent";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -17,7 +17,7 @@ const config = {
 };
 const botFrameworkAuth = new ConfigurationBotFrameworkAuthentication(config);
 const adapter = new CloudAdapter(botFrameworkAuth);
-const bot = new Stark();
+const bot = new Agent();
 
 app.post("/api/messages", (req, res) => {
     adapter.process(req, res, async (context) => {

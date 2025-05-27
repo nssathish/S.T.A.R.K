@@ -1,35 +1,30 @@
 import {Embedding} from "./model/Embedding";
-import {Content} from "./content";
 import {OpenAI} from "openai";
 import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
+import {DataMath} from "./math";
 
 export class Data {
     private openai: OpenAI;
+    private dataMath: DataMath;
 
     constructor() {
         dotenv.config();
         this.openai = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });
-    }
-
-    // Find the most relevant documents
-    cosineSimilarity(vecA: number[], vecB: number[]): number {
-        const dotProduct = vecA.reduce((sum, a, idx) => sum + a * vecB[idx], 0);
-        const magnitudeA = Math.sqrt(vecA.reduce((sum, a) => sum + a * a, 0));
-        const magnitudeB = Math.sqrt(vecB.reduce((sum, b) => sum + b * b, 0));
-        return dotProduct / (magnitudeA * magnitudeB);
+        this.dataMath = new DataMath();
     }
 
     async context(question: string, docsDirectory: string): Promise<string> {
-        const docsContent = new Content(docsDirectory);
-        const [questionVector, docEmbeddings] = await this.createEmbeddings(question, docsContent);
+        const [questionVector, docEmbeddings] = await this.createEmbeddings(question, docsDirectory);
         const rankedDocs = docEmbeddings
             .map((doc) => ({
                 filePath: (<Embedding>doc).FilePath,
                 content: (<Embedding>doc).Content,
                 embedding: (<Embedding>doc).Embedding,
-                similarity: this.cosineSimilarity(<number[]>questionVector, (<Embedding>doc).Embedding),
+                similarity: this.dataMath.cosineSimilarity(<number[]>questionVector, (<Embedding>doc).Embedding),
             }))
             .sort((a, b) => b.similarity - a.similarity)
             .slice(0, 5); // Top 5 relevant documents
@@ -39,13 +34,13 @@ export class Data {
             .join("\n---\n");
     }
 
-    private createEmbeddings = async (question: string, docsContent: Content) => {
+    private createEmbeddings = async (question: string, docsDirectory: string) => {
         const questionEmbedding = await this.openai.embeddings.create({
             model: "text-embedding-3-small",
             input: question,
         })
         const questionVector = questionEmbedding.data[0].embedding;
-        const docs = docsContent.load();
+        const docs = this.loadDocs(docsDirectory);
         const embeddings = await Promise.all(
             docs.map(async (doc) => {
                 const embedding = await this.openai.embeddings.create({
@@ -56,5 +51,16 @@ export class Data {
             })
         );
         return [questionVector, embeddings];
+    }
+
+    private loadDocs(docsDirectory: string): { content: string; filePath: string }[] {
+        const files = fs.readdirSync(docsDirectory, {recursive: true});
+        const mdxFiles = files.filter((file) => file.toString().endsWith(".mdx"));
+        return mdxFiles.map((file) => {
+            const filePath = path.join(docsDirectory, file.toString());
+            // console.log("Loading file:", filePath);
+            const content = fs.readFileSync(filePath, "utf-8");
+            return {content, filePath};
+        });
     }
 }

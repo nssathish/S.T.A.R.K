@@ -1,6 +1,6 @@
 # S.T.A.R.K
 
-A local Microsoft Teams bot (RAG based AI agent) named Stark that uses OpenAI and Pinecone to
+A local Microsoft Teams bot (RAG based AI agent) named Agent that uses OpenAI and Pinecone to
 answer questions from Docusaurus docs.
 
 # Teams Development
