@@ -1,9 +1,9 @@
-import {Embedding} from "./model/Embedding";
+import {Embedding} from "./model/Embedding.ts";
 import {OpenAI} from "openai";
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
-import {DataMath} from "./math";
+import {DataMath} from "./math.ts";
 
 export class Data {
     private openai: OpenAI;
@@ -55,10 +55,12 @@ export class Data {
 
     private loadDocs(docsDirectory: string): { content: string; filePath: string }[] {
         const files = fs.readdirSync(docsDirectory, {recursive: true});
-        const mdxFiles = files.filter((file) => file.toString().endsWith(".mdx"));
-        return mdxFiles.map((file) => {
+        const markdownFiles = files.filter((file) => {
+            const fileName = file.toString().toLowerCase();
+            return fileName.endsWith(".md") || fileName.endsWith(".mdx");
+        });
+        return markdownFiles.map((file) => {
             const filePath = path.join(docsDirectory, file.toString());
-            // console.log("Loading file:", filePath);
             const content = fs.readFileSync(filePath, "utf-8");
             return {content, filePath};
         });

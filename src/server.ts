@@ -1,13 +1,14 @@
 import express from "express";
 import {CloudAdapter, ConfigurationBotFrameworkAuthentication} from "botbuilder";
-import {Agent} from "./agent";
+import {Agent} from "./agent.ts";
 import dotenv from "dotenv";
 
 dotenv.config();
+dotenv.config({path: "src/.env"});
 
 const app = express();
 app.use(express.json());
-const port = process.env.PORT;
+const port = Number(process.env.PORT ?? 3978);
 
 const config = {
     MicrosoftAppId: process.env.BOT_ID || '',

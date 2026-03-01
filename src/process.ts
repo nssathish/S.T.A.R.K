@@ -1,18 +1,22 @@
-import {Data} from "./data";
+import {Data} from "./data.ts";
 import dotenv from "dotenv";
 import {OpenAI} from "openai";
 
 dotenv.config();
 
-
-const docsDirectory = "../docs/content";
-const data = new Data();
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-})
+const docsDirectory = "docs/content";
 
 export async function semanticAnalysis(question: string) {
-    const context = data.context(question, docsDirectory);
+    if (!process.env.OPENAI_API_KEY) {
+        return "OPENAI_API_KEY is not configured. Set it in your environment before asking questions.";
+    }
+
+    const data = new Data();
+    const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    const context = await data.context(question, docsDirectory);
     const chatCompletion = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
         messages: [

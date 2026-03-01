@@ -1,5 +1,5 @@
 import {TeamsActivityHandler} from "botbuilder";
-import {semanticAnalysis} from "./process";
+import {semanticAnalysis} from "./process.ts";
 
 export class Agent extends TeamsActivityHandler {
     constructor() {
